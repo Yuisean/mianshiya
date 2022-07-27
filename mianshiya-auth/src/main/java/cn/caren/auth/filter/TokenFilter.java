@@ -3,11 +3,9 @@ package cn.caren.auth.filter;
 
 import cn.caren.auth.bean.TokenProperties;
 import cn.caren.auth.config.TokenProvider;
-import cn.caren.core.factory.RedisTemplateFactory;
-import cn.hutool.core.bean.BeanUtil;
+import cn.caren.auth.manager.AuthCacheManager;
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
@@ -24,9 +22,6 @@ public class TokenFilter extends GenericFilterBean {
 
     private TokenProperties properties;
 
-    private ValueOperations<String, Object> stringOperations = RedisTemplateFactory.stringOperations();
-
-
     public TokenFilter(TokenProperties properties) {
         this.properties = properties;
     }
@@ -38,7 +33,7 @@ public class TokenFilter extends GenericFilterBean {
         // token不为空
         if (StrUtil.isNotEmpty(token)) {
             // token有效
-            if(BeanUtil.isNotEmpty(stringOperations.get(properties.getCacheName() + token))){
+            if(AuthCacheManager.existToken(token)){
                 TokenProvider.checkToken(token);
                 Authentication authentication = TokenProvider.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);

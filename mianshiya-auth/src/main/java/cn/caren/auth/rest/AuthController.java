@@ -9,11 +9,11 @@ import cn.caren.auth.service.AuthService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -66,41 +66,12 @@ public class AuthController {
         return ResponseEntity.ok(map);
     }
 
-//    @AnonymousGetMapping("/helo")
-//    public String asdasd(){
-//        return "sdas";
-//    }
-//
-//    @GetMapping("/test2")
-//    @PreAuthorize("hasRole('ROLE_ADMIN13')")
-//    public String sdadaasdassdas(){
-//        return "test";
-//    }
-//
-//
-//    @GetMapping("/test")
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
-//    public String sdadasdas(){
-//        return "test";
-//    }
-//
-//    @GetMapping("/test1")
-//    public String sdadas232das(){
-//        try {
-//            int i = 1/0;
-//        } catch (Exception e) {
-//            log.info("{}",e.getMessage());
-//            throw new BizException(ExceptionType.INNER_ERROR,e.getMessage());
-//        }
-//        return "test1";
-//    }
 
     /**
      * 发送验证码
      * @return /
      */
     @AnonymousGetMapping("/send_code")
-    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<Map<String, String>> sendCode() {
         return ResponseEntity.ok(authService.sendLoginCode());
     }
@@ -115,6 +86,30 @@ public class AuthController {
         authService.logout(TokenProvider.resolveToken(request));
         return ResponseEntity.ok(HttpStatus.OK);
     }
+
+
+
+
+    //=======================================================用户登录权限测试=========================================================
+
+    @GetMapping("/test/role")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String testRole(){
+        return "success";
+    }
+
+
+    @GetMapping("/test/normal")
+    public String testNormal(){
+        return "success";
+    }
+
+    @GetMapping("/test")
+    @PreAuthorize("hasRole('ROLE_123123')")
+    public String test(){
+        return "success";
+    }
+
 
 }
 
