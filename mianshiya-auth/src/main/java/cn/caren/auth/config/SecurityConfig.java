@@ -44,6 +44,7 @@ public class SecurityConfig {
     private TokenProperties properties;
 
 
+
     /**
      * 认证管理器
      * @param authenticationConfiguration

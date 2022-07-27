@@ -27,6 +27,8 @@ public class AuthCacheManager {
 
     private static final String LOGIN_CODE_CACHE_NAME = "auth:code:";
 
+    private static final Integer LOGIN_CODE_CACHE_TIME = 60 * 5;
+
     /**
      * 添加token缓存
      *
@@ -38,8 +40,25 @@ public class AuthCacheManager {
             STRINGOPERATIONS.set(PROPERTIES.getCacheName() + token, "", PROPERTIES.getTimeOut(), TimeUnit.SECONDS);
         } catch (Exception e) {
             log.error("redis set token: [{}], error msg:[{}]", token, e.getMessage());
-            // TODO: 2022/7/26 global exception
+            throw new BizException(ExceptionType.CACHE_INSERT_ITEM_FAIL_C0011);
         }
+    }
+
+    /**
+     * 验证缓存中是否存在
+     *
+     * @param token /
+     * @return Boolean， 存在 true/不存在 false
+     */
+    public static Boolean existToken(String token) {
+        Boolean status;
+        try {
+            status = TEMPLATE.hasKey(PROPERTIES.getCacheName() + token);
+        } catch (Exception e) {
+            log.error("redis exist key:[{}],error msg:[{}]", PROPERTIES.getCacheName() + token, e.getMessage());
+            throw new BizException(ExceptionType.CACHE_EXIST_FAIL_C0012);
+        }
+        return status;
     }
 
 
@@ -50,7 +69,7 @@ public class AuthCacheManager {
      * @param uuid 缓存唯一标识
      */
     public static void insertLoginCode(String code, String uuid) {
-        STRINGOPERATIONS.set(LOGIN_CODE_CACHE_NAME + uuid, code);
+        STRINGOPERATIONS.set(LOGIN_CODE_CACHE_NAME + uuid, code, LOGIN_CODE_CACHE_TIME, TimeUnit.SECONDS);
     }
 
     /**

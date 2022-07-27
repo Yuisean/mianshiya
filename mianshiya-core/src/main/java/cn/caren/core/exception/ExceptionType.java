@@ -34,6 +34,7 @@ public enum ExceptionType {
      */
     LOGIN_CODE_EXPIRE_A0014("A0014", "验证码过期或不存在"),
 
+
     /**
      * 缓存删除失败
      */
@@ -42,7 +43,12 @@ public enum ExceptionType {
     /**
      * 缓存添加失败
      */
-    CACHE_INSERT_ITEM_FAIL_C0011("C0011","缓存添加失败");
+    CACHE_INSERT_ITEM_FAIL_C0011("C0011","缓存添加失败"),
+
+    /**
+     * 缓存验证key失败
+     */
+    CACHE_EXIST_FAIL_C0012("C0012","验证缓存key发生错误");
 
 
 
