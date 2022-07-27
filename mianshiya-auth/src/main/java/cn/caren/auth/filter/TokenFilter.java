@@ -22,9 +22,6 @@ public class TokenFilter extends GenericFilterBean {
 
     private TokenProperties properties;
 
-
-
-
     public TokenFilter(TokenProperties properties) {
         this.properties = properties;
     }
